@@ -1,19 +1,27 @@
-# Kafka Event Streaming Applications
+# Kafka Log Appender Demo
 
-This demo and accompanying playbook show users how to deploy a Kafka event streaming application using [KSQL](https://www.confluent.io/product/ksql/) for stream processing. All the components in the Confluent platform have security enabled end-to-end. Run the demo with the [playbook and video tutorials](https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html).
+This demo is a proof of concept showing a custom developed Log4J appender logging Zookeeper and Broker log messages back into Kafka (please note that broker 2 is not instrumented for compa). 
 
-**Table of Contents**
+## Usage
 
-- [Overview](#overview)
-- [Documentation](#documentation)
+Everything is pre configured so just start in the usual cp-demo way. You can verify the appender as follows:
 
+1. Verify configs:
 
-## Overview
+```
+kafka-console-consumer --bootstrap-server localhost:10091 --topic _confluent-configs --from-beginning
+```
 
-The use case is an event streaming application that processes live edits to real Wikipedia pages. Wikimedia Foundation has IRC channels that publish edits happening to real wiki pages (e.g. #en.wikipedia, #en.wiktionary) in real time. Using [Kafka Connect](http://docs.confluent.io/current/connect/index.html), a Kafka source connector [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc) streams raw messages from these IRC channels, and a custom Kafka Connect transform [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) transforms these messages and then the messages are written to a Kafka cluster. This demo uses [KSQL](https://www.confluent.io/product/ksql/) for data enrichment, or you can optionally develop and run your own [Kafka Streams](http://docs.confluent.io/current/streams/index.html) application. Then a Kafka sink connector [kafka-connect-elasticsearch](http://docs.confluent.io/current/connect/connect-elasticsearch/docs/elasticsearch_connector.html) streams the data out of Kafka, applying another custom Kafka Connect transform called NullFilter. The data is materialized into [Elasticsearch](https://www.elastic.co/products/elasticsearch) for analysis by [Kibana](https://www.elastic.co/products/kibana). Use [Confluent Control Center](https://www.confluent.io/product/control-center/) for management and monitoring.
+2. Verify logs 
 
-![image](docs/images/drawing.png)
+```
+kafka-console-consumer --bootstrap-server localhost:10091 --topic _confluent-logs 
+```
 
-## Documentation
+## Caveats
 
-You can find the documentation for running this demo, playbook, and video tutorials at [https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html](https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html).
+This is a basic proof of concept and missing most features. For a full list of these see the one pager. The following are the obvious ones:
+
+1. It doesn't create the logging topics - in this demo auto topic create is enabled. In the final version it will manage topic creation
+2. There is no retention configured - Don't run this for long as it will fill disk
+3. Config isn't used to configure the appender - right now we just harvest config, in later versions we plan to use this config to automatically configure the appender.
