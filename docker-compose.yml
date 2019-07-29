@@ -71,7 +71,7 @@ services:
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
       KAFKA_ZOOKEEPER_SET_ACL: "true"
       KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/broker_jaas.conf
-      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
   kafka2:
     image: confluentinc/cp-enterprise-kafka:5.2.1
     hostname: kafka2
@@ -126,7 +126,7 @@ services:
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
       KAFKA_ZOOKEEPER_SET_ACL: "true"
       KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/broker_jaas.conf
-      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
   connect:
     image: confluentinc/cp-kafka-connect:5.1.0
     container_name: connect
@@ -221,7 +221,7 @@ services:
       CONNECT_CONSUMER_CONFLUENT_MONITORING_INTERCEPTOR_SSL_KEYSTORE_LOCATION: /etc/kafka/secrets/kafka.connect.keystore.jks
       CONNECT_CONSUMER_CONFLUENT_MONITORING_INTERCEPTOR_SSL_KEYSTORE_PASSWORD: confluent
       CONNECT_CONSUMER_CONFLUENT_MONITORING_INTERCEPTOR_SSL_KEY_PASSWORD: confluent
-      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"
+      CONNECT_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
       # Required for Schema Registry HTTPS
       KAFKA_OPTS: -Djavax.net.ssl.trustStore=/etc/kafka/secrets/kafka.connect.truststore.jks
                   -Djavax.net.ssl.trustStorePassword=confluent
@@ -265,7 +265,7 @@ services:
       # Disable SR client auth as temporary workaround to software bug
       SCHEMA_REGISTRY_SSL_CLIENT_AUTH: "false"
       SCHEMA_REGISTRY_SCHEMA_REGISTRY_INTER_INSTANCE_PROTOCOL: "https"
-      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"
+      SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
     ports:
       - 8085:8085
 
@@ -312,7 +312,7 @@ services:
                   -Djavax.net.ssl.trustStorePassword=confluent
                   -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.client.keystore.jks
                   -Djavax.net.ssl.keyStorePassword=confluent
-      KAFKA_REST_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"
+      KAFKA_REST_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
     ports:
       - 8086:8086
 
@@ -367,7 +367,7 @@ services:
                   -Djavax.net.ssl.trustStorePassword=confluent
                   -Djavax.net.ssl.keyStore=/etc/kafka/secrets/kafka.control-center.keystore.jks
                   -Djavax.net.ssl.keyStorePassword=confluent  
-      CONTROL_CENTER_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender"                    
+      CONTROL_CENTER_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"                    
 
 
   # This container is just to transfer Replicator jars to the Connect worker
