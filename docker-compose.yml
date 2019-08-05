@@ -27,6 +27,7 @@ services:
     volumes:
       - $PWD/scripts/security:/etc/kafka/secrets
       - $PWD/scripts/appender/kafka-log4j-appender-5.3.0-SNAPSHOT.jar:/usr/share/java/kafka/kafka-log4j-appender-5.3.0-SNAPSHOT.jar
+      - $PWD/scripts/logBundler:/etc/kafka/logBundler
     ports:
       - "9091:9091"
       - "29091:29091"
@@ -71,7 +72,7 @@ services:
       KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
       KAFKA_ZOOKEEPER_SET_ACL: "true"
       KAFKA_OPTS: -Djava.security.auth.login.config=/etc/kafka/secrets/broker_jaas.conf
-      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
+      KAFKA_LOG4J_ROOT_LOGLEVEL: "INFO, kafkaAppender, stdout\nlog4j.appender.kafkaAppender=io.confluent.appender.KafkaLog4JAppender\nlog4j.appender.kafkaAppender.service.id=kafka1\nlog4j.appender.kafkaAppender.log.topic.replication.factor=1\nlog4j.appender.kafkaAppender.config.topic.replication.factor=1\nlog4j.rootLogger=INFO, kafkaAppender, stdout"
   kafka2:
     image: confluentinc/cp-enterprise-kafka:5.2.1
     hostname: kafka2
