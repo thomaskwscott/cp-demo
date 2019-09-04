@@ -1,19 +1,54 @@
-# Kafka Event Streaming Applications
+# Replicator Synchronous Replication Demo
 
-This demo and accompanying playbook show users how to deploy a Kafka event streaming application using [KSQL](https://www.confluent.io/product/ksql/) for stream processing. All the components in the Confluent platform have security enabled end-to-end. Run the demo with the [playbook and video tutorials](https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html).
+This demo proves the principle of synchronous replication using the interceptor here:
 
-**Table of Contents**
+https://github.com/thomaskwscott/SynchronousReplicatorPoc
 
-- [Overview](#overview)
-- [Documentation](#documentation)
+## Running the demo
 
+Start cp-demo in the normal fashion, once started start 2 shell sessions in the kafka1 container. For the purposes of this test we will use the, already replicating wikipedia.parsed topic (we disabled the source connector that feeds this so we can feed it manually).
 
-## Overview
+1. In one shell session run a test producer that is configured with the interceptor:
 
-The use case is an event streaming application that processes live edits to real Wikipedia pages. Wikimedia Foundation has IRC channels that publish edits happening to real wiki pages (e.g. #en.wikipedia, #en.wiktionary) in real time. Using [Kafka Connect](http://docs.confluent.io/current/connect/index.html), a Kafka source connector [kafka-connect-irc](https://github.com/cjmatta/kafka-connect-irc) streams raw messages from these IRC channels, and a custom Kafka Connect transform [kafka-connect-transform-wikiedit](https://github.com/cjmatta/kafka-connect-transform-wikiedit) transforms these messages and then the messages are written to a Kafka cluster. This demo uses [KSQL](https://www.confluent.io/product/ksql/) for data enrichment, or you can optionally develop and run your own [Kafka Streams](http://docs.confluent.io/current/streams/index.html) application. Then a Kafka sink connector [kafka-connect-elasticsearch](http://docs.confluent.io/current/connect/connect-elasticsearch/docs/elasticsearch_connector.html) streams the data out of Kafka, applying another custom Kafka Connect transform called NullFilter. The data is materialized into [Elasticsearch](https://www.elastic.co/products/elasticsearch) for analysis by [Kibana](https://www.elastic.co/products/kibana). Use [Confluent Control Center](https://www.confluent.io/product/control-center/) for management and monitoring.
+```
+java -cp /usr/bin/../share/java/kafka/*:/usr/bin/../share/java/confluent-support-metrics/*:/usr/share/java/confluent-support-metrics/* io.confluent.interceptors.ProducerTest
+```
 
-![image](docs/images/drawing.png)
+The source code (with configuration properties) for this can be found here: 
 
-## Documentation
+https://github.com/thomaskwscott/SynchronousReplicatorPoc/blob/master/src/main/java/io/confluent/interceptors/ProducerTest.java
 
-You can find the documentation for running this demo, playbook, and video tutorials at [https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html](https://docs.confluent.io/current/tutorials/cp-demo/docs/index.html).
+2. This will produce 3 messages with output similar to the following:
+
+```
+About to send record 0
+Sent record 0
+About to send record 1
+Sent record 1
+About to send record 2
+Sent record 2
+Sent 3 records in 179.0 seconds (179454 milliseconds), total of 0.016759777 events per second
+```
+
+3. In the other session monitor the Replicator consumer (run this repeatedly) whilst the test producer is producing:
+
+```
+kafka-consumer-groups --bootstrap-server localhost:10091 --group connect-replicator --describe
+```
+
+Please ignore "Error: Consumer group 'connect-replicator' does not exist.". This just means Replicator has not committed any offsets yet.
+
+### Expected Behaviour
+
+After seeing the "About to send..." message from the producer you will see the Replicator consumer group lage by 1 message. This means that the message has been written to the source cluster but not yet replicated. 
+
+Once Replicator catches up and the lag reduces to zero you will see the "Sent record ..." message on the producer application. This indicates that the producer was blocked until replication completed.
+
+### Big Caveat
+
+This project intends to prove the concept only and performance is terrible!
+
+### Next Steps
+
+Right now replicator only commits offsets at intervals and so lag is extremely high. If replicator was to commit offsets as fast as it could lag would come right down.
+

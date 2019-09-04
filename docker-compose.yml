@@ -25,6 +25,7 @@ services:
       - zookeeper
     volumes:
       - $PWD/scripts/security:/etc/kafka/secrets
+      - $PWD/scripts/interceptor/synchronous-replication-interceptor-1.0-SNAPSHOT.jar:/usr/share/java/kafka/synchronous-replication-interceptor-1.0-SNAPSHOT.jar
     ports:
       - "9091:9091"
       - "29091:29091"
