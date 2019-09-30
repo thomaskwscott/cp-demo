@@ -140,10 +140,10 @@ services:
       - schemaregistry
     volumes:
       - ./connect-plugins:/connect-plugins
-      - /home/thomaskwscott/Projects/forks/skaundinya15/kafka-connect-replicator/target/kafka-connect-replicator-5.4.0-SNAPSHOT-package/share/java/kafka-connect-replicator/:/connect-plugins/kafka-connect-replicator/
+      - ./kafka-connect-replicator/:/connect-plugins/kafka-connect-replicator/
       - ./connect-plugins/kafka-connect-transform-nullfilter/null-filter-4.0.0-SNAPSHOT.jar:/usr/share/java/kafka-connect-elasticsearch/null-filter-4.0.0-SNAPSHOT.jar
       - ./scripts/security:/etc/kafka/secrets
-      - /home/thomaskwscott/Projects/replicator-metrics/replicator-rest-extensions/target/replicator-rest-extensions-5.3.2-SNAPSHOT.jar:/usr/share/java/kafka/replicator-rest-extensions-5.3.2-SNAPSHOT.jar
+      - ./replicator-rest-extensions/replicator-rest-extensions-5.3.2-SNAPSHOT.jar:/usr/share/java/kafka/replicator-rest-extensions-5.3.2-SNAPSHOT.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "kafka1:9091,kafka2:9092"
       CONNECT_REST_PORT: 8083
@@ -227,10 +227,10 @@ services:
       - schemaregistry
     volumes:
       - ./connect-plugins:/connect-plugins
-      - /home/thomaskwscott/Projects/forks/skaundinya15/kafka-connect-replicator/target/kafka-connect-replicator-5.4.0-SNAPSHOT-package/share/java/kafka-connect-replicator/:/connect-plugins/kafka-connect-replicator/
+      - ./kafka-connect-replicator/:/connect-plugins/kafka-connect-replicator/
       - ./connect-plugins/kafka-connect-transform-nullfilter/null-filter-4.0.0-SNAPSHOT.jar:/usr/share/java/kafka-connect-elasticsearch/null-filter-4.0.0-SNAPSHOT.jar
       - ./scripts/security:/etc/kafka/secrets
-      - /home/thomaskwscott/Projects/replicator-metrics/replicator-rest-extensions/target/replicator-rest-extensions-5.3.2-SNAPSHOT.jar:/usr/share/java/kafka/replicator-rest-extensions-5.3.2-SNAPSHOT.jar
+      - ./replicator-rest-extensions/replicator-rest-extensions-5.3.2-SNAPSHOT.jar:/usr/share/java/kafka/replicator-rest-extensions-5.3.2-SNAPSHOT.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "kafka1:9091,kafka2:9092"
       CONNECT_REST_PORT: 8084
