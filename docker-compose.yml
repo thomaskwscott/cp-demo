@@ -137,7 +137,7 @@ services:
       - schemaregistry
     volumes:
       - $PWD/connect-plugins:/connect-plugins
-      - mi3:/usr/share/java/kafka-connect-replicator/
+      - /Users/Tom/Projects/forks/kafka-connect-replicator/target/kafka-connect-replicator-5.2.1-package/share/java/kafka-connect-replicator:/usr/share/java/kafka-connect-replicator
       - $PWD/connect-plugins/kafka-connect-transform-nullfilter/null-filter-4.0.0-SNAPSHOT.jar:/usr/share/java/kafka-connect-elasticsearch/null-filter-4.0.0-SNAPSHOT.jar
       - $PWD/scripts/security:/etc/kafka/secrets
     environment:
@@ -288,7 +288,7 @@ services:
       CONTROL_CENTER_STREAMS_SSL_KEYSTORE_PASSWORD: confluent
       CONTROL_CENTER_STREAMS_SSL_KEY_PASSWORD: confluent
       CONTROL_CENTER_STREAMS_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: "HTTPS"
-      # HTTP and HTTPS to Control Center UI 
+      # HTTP and HTTPS to Control Center UI
       CONTROL_CENTER_REST_LISTENERS: "http://0.0.0.0:9021,https://0.0.0.0:9022"
       CONTROL_CENTER_REST_SSL_TRUSTSTORE_LOCATION: /etc/kafka/secrets/kafka.control-center.truststore.jks
       CONTROL_CENTER_REST_SSL_TRUSTSTORE_PASSWORD: confluent
@@ -511,15 +511,3 @@ services:
     ports:
       - 8086:8086
 
-  # This container is just to transfer Replicator jars to the Connect worker
-  # It is not used as a Connect worker
-  replicator-for-jar-transfer:
-    image: confluentinc/cp-enterprise-replicator:5.2.1
-    hostname: replicator-for-jar-transfer
-    container_name: replicator-for-jar-transfer
-    volumes:
-      - mi3:/usr/share/java/kafka-connect-replicator/
-    command: "sleep infinity"
-
-volumes:
-    mi3: {}
