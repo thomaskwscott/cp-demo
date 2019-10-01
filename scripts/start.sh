@@ -36,40 +36,14 @@ echo -e "Generate keys and certificates used for SSL"
 echo -e "Bringing up Docker Compose"
 docker-compose up -d
 
-# Verify Confluent Control Center has started within MAX_WAIT seconds
-MAX_WAIT=300
-CUR_WAIT=0
-echo "Waiting up to $MAX_WAIT seconds for Confluent Control Center to start"
-while [[ ! $(docker-compose logs control-center) =~ "Started NetworkTrafficServerConnector" ]]; do
-  sleep 3
-  CUR_WAIT=$(( CUR_WAIT+3 ))
-  if [[ "$CUR_WAIT" -gt "$MAX_WAIT" ]]; then
-    echo -e "\nERROR: The logs in control-center container do not show 'Started NetworkTrafficServerConnector' after $MAX_WAIT seconds. Please troubleshoot with 'docker-compose ps' and 'docker-compose logs'.\n"
-    exit 1
-  fi
-done
-
 # Verify Docker containers started
 if [[ $(docker-compose ps) =~ "Exit 137" ]]; then
   echo -e "\nERROR: At least one Docker container did not start properly, see 'docker-compose ps'. Did you remember to increase the memory available to Docker to at least 8GB (default is 2GB)?\n"
   exit 1
 fi
 
-
-# Verify Docker has the latest cp-kafka-connect image
-if [[ $(docker-compose logs connect) =~ "server returned information about unknown correlation ID" ]]; then
-  echo -e "\nERROR: Please update the cp-kafka-connect image with 'docker-compose pull'\n"
-  exit 1
-fi
-
-echo -e "\nRename the cluster in Control Center:"
-# If you have 'jq'
-curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka Raleigh"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X GET http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output '.[0].clusterId')
-# If you don't have 'jq'
-#curl -X PATCH  -H "Content-Type: application/merge-patch+json" -d '{"displayName":"Kafka Raleigh"}' http://localhost:9021/2.0/clusters/kafka/$(curl -X GET http://localhost:9021/2.0/clusters/kafka/ | awk -v FS="(clusterId\":\"|\",\"displayName)" '{print $2}' )
-
 # Verify Kafka Connect Worker has started within 120 seconds
-MAX_WAIT=120
+MAX_WAIT=300
 CUR_WAIT=0
 echo "Waiting up to $MAX_WAIT seconds for Kafka Connect Worker to start"
 while [[ ! $(docker-compose logs connect) =~ "Herder started" ]]; do
@@ -89,25 +63,8 @@ fi
 echo -e "\nStart streaming from the IRC source connector:"
 ${DIR}/connectors/submit_wikipedia_irc_config.sh
 
-echo -e "\nProvide data mapping to Elasticsearch:"
-${DIR}/dashboard/set_elasticsearch_mapping_bot.sh
-${DIR}/dashboard/set_elasticsearch_mapping_count.sh
-
-echo -e "\nStart streaming to Elasticsearch sink connector:"
-${DIR}/connectors/submit_elastic_sink_config.sh
-
 echo -e "\nStart Confluent Replicator:"
 ${DIR}/connectors/submit_replicator_config.sh
-
-echo -e "\nConfigure Kibana dashboard:"
-${DIR}/dashboard/configure_kibana_dashboard.sh
-
-echo -e "\n\nRun KSQL queries (~10 seconds):"
-${DIR}/ksql/run_ksql.sh
-
-echo -e "\nStart consumers for additional topics: WIKIPEDIANOBOT, EN_WIKIPEDIA_GT_1_COUNTS"
-${DIR}/consumers/listen_WIKIPEDIANOBOT.sh
-${DIR}/consumers/listen_EN_WIKIPEDIA_GT_1_COUNTS.sh
 
 # Verify wikipedia.parsed topic is populated and schema is registered
 MAX_WAIT=50
@@ -127,12 +84,10 @@ done
 SCHEMA=$(docker-compose exec schemaregistry curl -X GET --cert /etc/kafka/secrets/schemaregistry.certificate.pem --key /etc/kafka/secrets/schemaregistry.key --tlsv1.2 --cacert /etc/kafka/secrets/snakeoil-ca-1.crt https://schemaregistry:8085/subjects/wikipedia.parsed-value/versions/latest | jq .schema)
 docker-compose exec schemaregistry curl -X POST --cert /etc/kafka/secrets/schemaregistry.certificate.pem --key /etc/kafka/secrets/schemaregistry.key --tlsv1.2 --cacert /etc/kafka/secrets/snakeoil-ca-1.crt -H "Content-Type: application/vnd.schemaregistry.v1+json" --data "{\"schema\": $SCHEMA}" https://schemaregistry:8085/subjects/wikipedia.parsed.replica-value/versions
 
-echo -e "\nConfigure triggers and actions in Control Center:"
-curl -X POST -H "Content-Type: application/json" -d '{"name":"Consumption Difference","clusterId":"'$(curl -X GET http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output '.[0].clusterId')'","group":"connect-elasticsearch-ksql","metric":"CONSUMPTION_DIFF","condition":"GREATER_THAN","longValue":"0","lagMs":"10000"}' http://localhost:9021/2.0/alerts/triggers
-curl -X POST -H "Content-Type: application/json" -d '{"name":"Under Replicated Partitions","clusterId":"default","condition":"GREATER_THAN","longValue":"0","lagMs":"60000","brokerClusters":{"brokerClusters":["'$(curl -X GET http://localhost:9021/2.0/clusters/kafka/ | jq --raw-output ".[0].clusterId")'"]},"brokerMetric":"UNDER_REPLICATED_TOPIC_PARTITIONS"}' http://localhost:9021/2.0/alerts/triggers
-curl -X POST -H "Content-Type: application/json" -d '{"name":"Email Administrator","enabled":true,"triggerGuid":["'$(curl -X GET http://localhost:9021/2.0/alerts/triggers/ | jq --raw-output '.[0].guid')'","'$(curl -X GET http://localhost:9021/2.0/alerts/triggers/ | jq --raw-output '.[1].guid')'"],"maxSendRate":1,"intervalMs":"60000","email":{"address":"devnull@confluent.io","subject":"Confluent Control Center alert"}}' http://localhost:9021/2.0/alerts/actions
-
 echo -e "\n\n\n******************************************************************"
-echo -e "DONE! Connect to Confluent Control Center at http://localhost:9021"
+echo -e "DONE! Connect to Connect at http://localhost:8083"
+echo -e "DONE! Connect to Connect-2 at http://localhost:8084"
+echo -e "DONE! Connect to Connect JMX at localhost:9995"
+echo -e "DONE! Connect to Connect-2 JMX at localhost:9996"
 echo -e "******************************************************************\n"
 

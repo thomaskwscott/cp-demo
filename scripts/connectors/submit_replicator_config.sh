@@ -51,7 +51,8 @@ DATA=$( cat << EOF
     "src.kafka.timestamps.producer.confluent.monitoring.interceptor.sasl.jaas.config": "org.apache.kafka.common.security.plain.PlainLoginModule required username=\"client\" password=\"client-secret\";",
     "src.kafka.timestamps.producer.confluent.monitoring.interceptor.sasl.mechanism": "PLAIN",
     "offset.timestamps.commit": "false",
-    "tasks.max": "1"
+    "tasks.max": "1",
+    "confluent.license": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJjdG9tbXlib3kiLCJleHAiOjE2MzIzNTUyMDAsImlhdCI6MTU2OTE5NjgwMCwiaXNzIjoiQ29uZmx1ZW50IiwibW9uaXRvcmluZyI6dHJ1ZSwibmI0IjoxNTY5MjYyMTI4LCJzdWIiOiJjb250cm9sLWNlbnRlciJ9.FXfN1hGiLVPtRNAvyqMb4hyJePi9ncnDtvW5FnEMKmtbW378WhhTdkmclIkesPnf1bFROFWck0ElfKkRQw4k0WLHNxCP2OxnyiAp3wAvKGPhUuU06dntYYXOdyMx_M7rm3bexE54KTUrYouy6gjwHKHS0W7ujYpmm2ss4h5-8ka7WoNqtwPQkte0s12nmwC3b_W9E8op2iPEMXpmiy5LCddMv-0Z3dS_AA_MsX-aMTANsEnRDHs4loBJCBlzrhwR9TWwjQPemFvdFUJyTbx2e4f2fH1UB-5PNbS7g144zVXIIAbQD39NSp2y-snib9HMzrn6_4PoiZ2fR8sOWBjkmA"
   }
 }
 EOF
