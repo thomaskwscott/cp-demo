@@ -141,7 +141,7 @@ services:
     volumes:
       - ./connect-plugins:/connect-plugins
       - ./scripts/security:/etc/kafka/secrets
-      - ./rest-extension/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar:/usr/share/java/kafka/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar
+      - ./connect-plugins/kafka-connect-replicator/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar:/usr/share/java/kafka/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "kafka1:9091,kafka2:9092"
       CONNECT_REST_PORT: 8083
@@ -226,7 +226,7 @@ services:
     volumes:
       - ./connect-plugins:/connect-plugins
       - ./scripts/security:/etc/kafka/secrets
-      - ./rest-extension/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar:/usr/share/java/kafka/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar
+      - ./connect-plugins/kafka-connect-replicator/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar:/usr/share/java/kafka/kafka-connect-replicator-5.4.0-SNAPSHOT-rest-extension.jar
     environment:
       CONNECT_BOOTSTRAP_SERVERS: "kafka1:9091,kafka2:9092"
       CONNECT_REST_PORT: 8084
